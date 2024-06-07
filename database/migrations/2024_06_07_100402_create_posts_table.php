@@ -12,8 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('posts', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+            $table->string('post_id')->primary();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->text('text_content');
+            $table->text('media_content')->nullable();
+            $table->unsignedInteger('count_like')->default(0);
+            $table->unsignedInteger('count_comment')->default(0);
+            $table->timestamp('created_at')->nullable();
         });
     }
 

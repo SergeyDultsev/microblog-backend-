@@ -13,7 +13,13 @@ return new class extends Migration
     {
         Schema::create('subscriptions', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('subscription_id');
+            $table->unsignedBigInteger('subscriber_id');
+            $table->unsignedBigInteger('target_id');
             $table->timestamps();
+            $table->foreign('subscriber_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('target_id')->references('id')->on('users')->onDelete('cascade');
+            $table->unique(['subscription_id', 'subscriber_id', 'target_id']);
         });
     }
 

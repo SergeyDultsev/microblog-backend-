@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -15,7 +17,7 @@ class UserController extends Controller
             return response()->json(['message' => 'User not found'], 404);
         }
 
-        return response()->json($user);
+        return response()->json(['data' => $user]);
     }
 
     public function updateRole(Request $request, User $userId)
@@ -27,12 +29,10 @@ class UserController extends Controller
 
         $user = User::find($userId->id);
 
-        // Существует ли пользователь
         if (!$user) {
             return response()->json(['error' => 'User not found'], 404);
         }
 
-        // Наличие параметра роли
         if (!$request->has('role')) {
             return response()->json(['error' => 'Role parameter is required'], 400);
         }
@@ -65,7 +65,6 @@ class UserController extends Controller
     {
         $user = User::find($userId->id);
 
-        // Наличие параметра роли
         if (!$request->has('profile_avatar_url')) {
             return response()->json(['error' => 'Role parameter is required'], 400);
         }
@@ -75,7 +74,6 @@ class UserController extends Controller
     {
         $user = User::find($userId);
 
-        // Наличие параметра роли
         if (!$request->has('profile_head_avatar_url')) {
             return response()->json(['error' => 'Role parameter is required'], 400);
         }
@@ -112,6 +110,6 @@ class UserController extends Controller
             return response()->json(['message' => 'Пользователи не найдены'], 404);
         }
 
-        return response()->json($users);
+        return response()->json(['data' => $users]);
     }
 }

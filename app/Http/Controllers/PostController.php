@@ -3,15 +3,24 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\PostRequest;
+use App\Models\Post;
+use App\Models\Subscription;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Ramsey\Uuid\Uuid;
+use function Webmozart\Assert\Tests\StaticAnalysis\uuid;
+use App\Http\Resources\PostResource;
 
 class PostController extends Controller
 {
     public function createPost(PostRequest $request)
     {
-        // Добавляем user_id к данным запроса
-        $postData = $request->all();
+        $postData = $request->validated();
+        $postData['post_id'] = Uuid::uuid4()->toString();
         $postData['user_id'] = Auth::id();
+        $postData['created_at'] = now();
 
         Post::create($postData);
         return response()->json(['message' => 'Successful create post'], 201);
@@ -38,15 +47,22 @@ class PostController extends Controller
         }
     }
 
-    public function getPost(Post $post)
+    public function getPost($postId)
     {
-        return response()->json($post);
+        $post = Post::find($postId);
+
+        if (!$post) {
+            return response()->json(['message' => 'Post not found'], 404);
+        }
+
+        return response()->json(['data' => $post]);
     }
 
-    public function getUserPosts($user)
+    public function getUserPosts($userId)
     {
-        $posts = $user->posts()->pluck('id');
-        return response()->json($posts);
+        $user = User::find($userId);
+        $posts = $user->posts;
+        return response()->json(['data' => $posts]);
     }
 
     // Лента постов
@@ -61,6 +77,6 @@ class PostController extends Controller
             $posts = Post::latest()->paginate(100);
         }
 
-        return response()->json($posts);
+        return PostResource::Collection($posts);
     }
 }
