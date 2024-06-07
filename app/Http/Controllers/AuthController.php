@@ -18,16 +18,12 @@ class AuthController extends Controller
 {
     public function register(RegisterRequest $request)
     {
-        // Получаем количество всех пользователей
         $userCount = User::count();
 
-        // Определяем роль пользователя на основе количества пользователей
         $roleName = $userCount === 0 ? 'admin' : 'user';
 
-        // Получаем соответствующую роль из базы данных
         $role = Role::where('name', $roleName)->first();
 
-        // Создаем пользователя
         $birthdate = Carbon::createFromDate($request->year, $request->month, $request->day);
 
         // Проверка что ДР пользователя в прошлом
@@ -43,7 +39,7 @@ class AuthController extends Controller
             'name' => $request->name,
             'surname' => $request->surname,
             'registration_date' => now(),
-            'role_id' => $role->id, // Устанавливаем роль в зависимости от количества пользователей
+            'role_id' => $role->id,
             'age' => $age,
             'birthdate' => $birthdate,
             'uuid' => Uuid::uuid4()->toString(),
