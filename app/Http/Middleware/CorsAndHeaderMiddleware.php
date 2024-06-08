@@ -8,16 +8,17 @@ use Symfony\Component\HttpFoundation\Response;
 
 class CorsAndHeaderMiddleware
 {
-    public function handle(Request $request, Closure $next)
+    public function handle(Request $request, Closure $next): Response
     {
+        // Устанавливаем заголовки CORS
         $response = $next($request);
+        $response->headers->set('Access-Control-Allow-Origin', '*');
+        $response->headers->set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+        $response->headers->set('Access-Control-Allow-Headers', 'Content-Type, Authorization, token');
 
-        if (method_exists($response, 'header')) {
-            $response->header('Access-Control-Allow-Origin', '*');
-            $response->header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-            $response->header('Access-Control-Allow-Headers', 'Content-Type, Authorization, token');
-            $response->header('Access-Control-Allow-Credentials', 'true');
-        }
+        // Устанавливаем заголовки Accept и Content-Type в application/json
+        $request->headers->set('Accept', 'application/json');
+        $request->headers->set('Content-Type', 'application/json');
 
         return $response;
     }

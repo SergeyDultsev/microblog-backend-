@@ -63,6 +63,5 @@ Route::middleware(['auth:sanctum'])->group(function() {
 
 // Маршруты для администраторов
 Route::middleware(['auth:sanctum', 'admin'])->group(function() {
-    Route::get('/roles', [RoleController::class, 'getRoles']);
     Route::put('/users/{userId}/role', [UserController::class, 'updateRole']);
 });
