@@ -75,6 +75,6 @@ class UserController
             return response()->json(['message' => 'Users not found'], 404);
         }
 
-        return response()->json(['data' => $users]);
+        return response()->json($users);
     }
 }
