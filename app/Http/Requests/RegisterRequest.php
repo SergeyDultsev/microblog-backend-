@@ -34,6 +34,14 @@ class RegisterRequest extends FormRequest
             'email.unique' => 'This email address is already in use.',
             'password.required' => 'The Password field is required.',
             'password.min' => 'The password must contain at least 6 characters.',
+            'year.required' => 'The "Year" field is required.',
+            'year.integer' => 'The "Year" field must be an integer.',
+            'month.required' => 'The "Month" field is required.',
+            'month.integer' => 'The "Month" field must be an integer.',
+            'month.between' => 'The "Month" field must be between 1 and 12.',
+            'day.required' => 'The "Day" field is required.',
+            'day.integer' => 'The "Day" field must be an integer.',
+            'day.between' => 'The "Day" field must be between 1 and 31.',
         ];
     }
 }

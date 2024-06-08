@@ -23,8 +23,8 @@ return new class extends Migration
             $table->timestamp('birthdate')->nullable();
             $table->integer('subscriptions_count')->default(0);
             $table->integer('subscriber_count')->default(0);
-            $table->string('profile_avatar_url')->nullable();
-            $table->string('profile_head_avatar_url')->nullable();
+            $table->string('avatar_url')->nullable();
+            $table->string('head_avatar_url')->nullable();
             $table->timestamp('registration_date')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->rememberToken();

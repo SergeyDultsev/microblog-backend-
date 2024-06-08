@@ -15,14 +15,14 @@ class LoginRequest extends FormRequest
     {
         return [
             'email' => 'required|string|email',
-            'password' => 'required|string|min:6',
+            'password' => 'required|string|min:8',
         ];
     }
 
     public function messages(): array
     {
         return [
-            'email.required' => 'Email required.',
+            'email.required' => 'The Email field is required.',
             'email.email' => 'Invalid email format.',
             'password.required' => 'The Password field is required.',
         ];

@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Models\Comment;
+use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class CommentController extends Controller
+class CommentController
 {
     public function createComment(Request $request)
     {
@@ -36,6 +36,6 @@ class CommentController extends Controller
     public function getComments($postId)
     {
         $comments = Post::findOrFail($postId)->comments()->pluck('id');
-        return response()->json($comments);
+        return response()->json(['data' => $comments]);
     }
 }

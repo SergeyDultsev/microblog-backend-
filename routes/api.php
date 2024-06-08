@@ -2,8 +2,11 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\ImageController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\RoleController;
+use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -25,17 +28,24 @@ Route::get('/posts/{postId}', [PostController::class, 'getPost']);
 Route::get('/posts/{postId}/comments', [CommentController::class, 'getComments']);
 Route::get('/comments/{commentId}', [CommentController::class, 'getComment']);
 
+// Публичный маршрут получение изображения
+Route::get('/images/{fileName}', [ImageController::class, 'getImage']);
+
 // Защищенные маршруты
 Route::middleware(['auth:sanctum'])->group(function() {
     // Маршрут для выхода
     Route::post('/logout', [AuthController::class, 'logout']);
 
     // Маршруты для пользователей
-    Route::put('/users/{userId}/role', [UserController::class, 'updateRole'])->middleware('admin');
     Route::patch('/users/{userId}/about', [UserController::class, 'updateUserAbout']);
     Route::patch('/users/{userId}/avatar', [UserController::class, 'updateUserAvatar']);
     Route::patch('/users/{userId}/head-avatar', [UserController::class, 'updateUserHeadAvatar']);
-    Route::delete('/users/{userId}', [UserController::class, 'deleteUser']);
+    Route::delete('/users-delete', [UserController::class, 'deleteUser']);
+
+    // Маршруты для подписок
+    Route::get('/subscriptions', [SubscriptionController::class, 'getSubscriptions']);
+    Route::get('/subscribers', [SubscriptionController::class, 'getSubscribers']);
+    Route::post('/toggle-subscription', [SubscriptionController::class, 'toggleSubscribe']);
 
     // Маршруты для постов
     Route::post('/posts', [PostController::class, 'createPost']);
@@ -49,4 +59,10 @@ Route::middleware(['auth:sanctum'])->group(function() {
     // Маршруты лайков
     Route::post('/posts/{postId}/like', [LikeController::class, 'toggleLike']);
     Route::get('/user/{userId}/likes-posts', [LikeController::class, 'getLikesPosts']);
+});
+
+// Маршруты для администраторов
+Route::middleware(['auth:sanctum', 'admin'])->group(function() {
+    Route::get('/roles', [RoleController::class, 'getRoles']);
+    Route::put('/users/{userId}/role', [UserController::class, 'updateRole']);
 });

@@ -24,8 +24,8 @@ class User extends Authenticatable
         'birthdate',
         'subscriptions_count',
         'subscriber_count',
-        'profile_avatar_url',
-        'profile_head_avatar_url',
+        'avatar_url',
+        'head_avatar_url',
         'registration_date',
     ];
 

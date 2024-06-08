@@ -2,19 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Models\Role;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
-use Laravel\Sanctum\PersonalAccessToken;
+use Illuminate\Support\Facades\Hash;
 use Ramsey\Uuid\Uuid;
 
-class AuthController extends Controller
+class AuthController
 {
     public function register(RegisterRequest $request)
     {
@@ -64,6 +62,7 @@ class AuthController extends Controller
             'token' => $token,
             'userId' => $user->id,
             'userRole' => $userRole,
+            'userAvatar' => $user->avatar,
             'userName' => $user->name,
             'userSurname' => $user->surname,
         ]);
@@ -71,7 +70,7 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
-        $request->user()->currentAccessToken()->delete();
+        $request->user()->tokens()->delete();
         return response()->json(['message' => 'Logged out']);
     }
 }

@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
+use App\Http\Resources\PostResource;
 use App\Models\Like;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
-class LikeController extends Controller
+class LikeController
 {
     public function toggleLike(Request $request)
     {
@@ -42,7 +42,14 @@ class LikeController extends Controller
 
     public function getLikesPosts($userId)
     {
-        $posts = Like::where('user_id', $userId)->with('post')->get();
-        return response()->json($posts);
+        $likesPosts = Like::where('user_id', $userId)->with('post')->get();
+
+        if (!$likesPosts) {
+            return response()->json(['message' => 'Post not found'], 404);
+        }
+
+        $posts = $likesPosts->pluck('post')->filter();
+
+        return PostResource::Collection(["data" => $posts]);
     }
 }
