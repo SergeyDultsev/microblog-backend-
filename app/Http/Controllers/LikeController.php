@@ -42,14 +42,20 @@ class LikeController
 
     public function getLikesPosts($userId)
     {
+        $user = Auth::user();
+
+        if (!$user) {
+            return response()->json(['message' => 'Unauthorized access'], 401);
+        }
+
         $likesPosts = Like::where('user_id', $userId)->with('post')->get();
 
-        if (!$likesPosts) {
+        if ($likesPosts->isEmpty()) {
             return response()->json(['message' => 'Post not found'], 404);
         }
 
         $posts = $likesPosts->pluck('post')->filter();
 
-        return PostResource::Collection(["data" => $posts]);
+        return PostResource::collection($posts);
     }
 }

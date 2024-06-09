@@ -62,7 +62,7 @@ class PostController
 
         if (Auth::user()->hasRole('admin') || $post->user_id === Auth::id()) {
             $post->delete();
-            return response()->json(['message' => 'Post deleted successfully'], 204);
+            return response()->json(['message' => 'Post deleted successfully']);
         } else {
             return response()->json(['error' => 'You are not authorized to delete this post'], 403);
         }

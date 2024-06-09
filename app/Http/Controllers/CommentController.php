@@ -25,14 +25,14 @@ class CommentController
 
     public function deleteComment($commentId)
     {
-        $comment = Post::find($commentId);
+        $comment = Comment::find($commentId);
         if(!$comment){
             return response()->json(['message' => 'Comment not found'], 404);
         }
 
         if (Auth::user()->hasRole('admin') || $comment->user_id == Auth::id()) {
             $comment->delete();
-            return response()->json(['message' => 'Comment deleted successfully'], 204);
+            return response()->json(['message' => 'Comment deleted successfully']);
         } else {
             return response()->json(['error' => 'You are not authorized to delete this comment'], 403);
         }
