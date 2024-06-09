@@ -44,6 +44,21 @@ class User extends Authenticatable
         return $this->role->name === $role;
     }
 
+    public function getFullNameAttribute()
+    {
+        return "{$this->name} {$this->surname}";
+    }
+
+    public function getIsVerifiedAttribute()
+    {
+        return !is_null($this->email_verified_at);
+    }
+
+    public function getAvatarUrlAttribute()
+    {
+        return $this->attributes['avatar_url'];
+    }
+
     public function posts()
     {
         return $this->hasMany(Post::class, 'user_id', 'id');

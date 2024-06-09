@@ -2,28 +2,26 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\RoleRequest;
 use App\Models\User;
-use Illuminate\Http\Request;
 
 class RoleController
 {
-    public function updateRole(Request $request, User $userId)
+    public function updateRole(RoleRequest $request, User $user)
     {
-        // Имеет ли текущий пользователь право изменять роль
         if (!$request->user()->isAdmin()) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
-        $user = User::find($userId->id);
+        $user = User::find($user->id);
 
-        if (!$user) {
-            return response()->json(['error' => 'User not found'], 404);
+        if ($user->role == 'admin') {
+            return response()->json(['message' => 'User admin']);
         }
 
-
-        $user->role = $role;
+        $user->role = 'admin';
         $user->save();
 
-        return response()->json(['message' => 'User role updated successfully']);
+        return response()->json(['message' => 'User role successfully changed']);
     }
 }

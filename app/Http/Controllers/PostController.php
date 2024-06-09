@@ -6,10 +6,8 @@ use App\Http\Requests\PostRequest;
 use App\Models\Post;
 use App\Models\Subscription;
 use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Ramsey\Uuid\Uuid;
-use function Webmozart\Assert\Tests\StaticAnalysis\uuid;
 use App\Http\Resources\PostResource;
 
 class PostController
@@ -55,9 +53,14 @@ class PostController
         return response()->json(['message' => 'Successful edit post']);
     }
 
-    public function deletePost(Post $post)
+    public function deletePost($postId)
     {
-        if (Auth::user()->isAdmin() || $post->user_id === Auth::id()) {
+        $post = Post::find($postId);
+        if (!$post) {
+            return response()->json(['error' => 'Post not found'], 404);
+        }
+
+        if (Auth::user()->hasRole('admin') || $post->user_id === Auth::id()) {
             $post->delete();
             return response()->json(['message' => 'Post deleted successfully'], 204);
         } else {
@@ -73,43 +76,20 @@ class PostController
             return response()->json(['message' => 'Post not found'], 404);
         }
 
-        $filename = basename($post->media_content);
-
-        return response()->json([
-            'post_id' => $post->post_id,
-            'user_id' => $post->user_id,
-            'text_content' => $post->text_content,
-            'filename' => $filename,
-            'count_like' => $post->count_like,
-            'count_comment' => $post->count_comment,
-            'created_at' => $post->created_at,
-        ]);
+        return new PostResource($post);
     }
 
     public function getUserPosts($userId)
     {
         $user = User::find($userId);
         $posts = $user->posts;
+
         return response()->json($posts);
     }
 
-    // Лента постов
     public function feed()
     {
-        if(Auth::check()) {
-            $user = Auth::id();
-            $subscriptionUsers = Subscription::where('subscriber_id', $user)->pluck('target_id');
-            $posts = Post::whereIn('user_id', $subscriptionUsers)->latest()->paginate(100);
-
-            foreach ($posts as $post) {
-                $post->hasLiked = $post->likes()->where('user_id', $user)->exists();
-            }
-
-            return response()->json($posts);
-        } else{
-            $posts = Post::latest()->paginate(100);
-        }
-
-        return PostResource::Collection($posts);
+        $feedPosts = Post::latest()->paginate(100);
+        return PostResource::Collection($feedPosts);
     }
 }

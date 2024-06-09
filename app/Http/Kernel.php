@@ -16,7 +16,7 @@ class Kernel extends HttpKernel
 {
     protected $middleware = [
         VerifyCsrfToken::class,
-        CorsAndHeaderMiddleware::class
+        CorsAndHeaderMiddleware::class,
     ];
 
     protected $middlewareGroups = [

@@ -37,9 +37,9 @@ Route::middleware(['auth:sanctum'])->group(function() {
     Route::post('/logout', [AuthController::class, 'logout']);
 
     // Маршруты для пользователей
-    Route::patch('/users/{userId}/about', [UserController::class, 'updateUserAbout']);
-    Route::patch('/users/{userId}/avatar', [UserController::class, 'updateUserAvatar']);
-    Route::patch('/users/{userId}/head-avatar', [UserController::class, 'updateUserHeadAvatar']);
+    Route::patch('/users/{userId}/about', [UserController::class, 'userAbout']);
+    Route::patch('/users/{userId}/avatar', [UserController::class, 'userAvatar']);
+    Route::patch('/users/{userId}/head-avatar', [UserController::class, 'userHeadAvatar']);
     Route::delete('/users-delete', [UserController::class, 'deleteUser']);
 
     // Маршруты для подписок
@@ -63,5 +63,5 @@ Route::middleware(['auth:sanctum'])->group(function() {
 
 // Маршруты для администраторов
 Route::middleware(['auth:sanctum', 'admin'])->group(function() {
-    Route::put('/users/{userId}/role', [UserController::class, 'updateRole']);
+    Route::put('/users/{userId}/role', [RoleController::class, 'updateRole']);
 });

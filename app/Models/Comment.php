@@ -10,6 +10,7 @@ class Comment extends Model
     use HasFactory;
 
     protected $fillable = [
+        'comment_id',
         'user_id',
         'post_id',
         'comment_content',
@@ -22,6 +23,7 @@ class Comment extends Model
     ];
 
     public $incrementing = false;
+    public $timestamps = false;
     protected $primaryKey = "comment_id";
 
     public function user()

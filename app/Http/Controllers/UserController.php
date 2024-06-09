@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -16,22 +17,21 @@ class UserController
             return response()->json(['message' => 'User not found'], 404);
         }
 
-        return response()->json($user);
+        return new UserResource($user);
     }
 
-    public function updateUserAbout(Request $request, User $userId)
+    public function userAbout(Request $request, User $userId)
     {
         $user = User::find($userId);
 
-        // Наличие параметра роли
         if (!$request->has('about')) {
-            return response()->json(['error' => 'Role parameter is required'], 400);
+            return response()->json(['error' => 'about parameter is required'], 400);
         }
 
         $user->save();
     }
 
-    public function updateUserAvatar(Request $request, User $userId)
+    public function userAvatar(Request $request, User $userId)
     {
         $user = User::find($userId->id);
 
@@ -40,7 +40,7 @@ class UserController
         }
     }
 
-    public function updateUserHeadAvatar(Request $request, User $userId)
+    public function userHeadAvatar(Request $request, User $userId)
     {
         $user = User::find($userId);
 
@@ -49,7 +49,7 @@ class UserController
         }
     }
 
-    public function deleteUser(Request $request)
+    public function deleteUser()
     {
         $user = Auth::user();
 
@@ -66,7 +66,6 @@ class UserController
     {
         $query = $request->query('query');
 
-        // Фильтруем пользователей по имени и фамилии
         $users = User::where('name', 'LIKE', "%{$query}%")
             ->orWhere('surname', 'LIKE', "%{$query}%")
             ->get();
