@@ -37,15 +37,17 @@ Route::middleware(['auth:sanctum'])->group(function() {
     Route::post('/logout', [AuthController::class, 'logout']);
 
     // Маршруты для пользователей
-    Route::patch('/users/{userId}/about', [UserController::class, 'userAbout']);
-    Route::patch('/users/{userId}/avatar', [UserController::class, 'userAvatar']);
-    Route::patch('/users/{userId}/head-avatar', [UserController::class, 'userHeadAvatar']);
+    Route::patch('/users/about', [UserController::class, 'updateAbout']);
+    Route::patch('/users/avatar', [UserController::class, 'updateAvatar']);
+    Route::patch('/users/head-avatar', [UserController::class, 'updateHeaderAvatar']);
+    Route::patch('/users/full-name', [UserController::class, 'updateFullName']);
+    Route::patch('/users/birthday', [UserController::class, 'updateBirthday']);
     Route::delete('/users-delete', [UserController::class, 'deleteUser']);
 
     // Маршруты для подписок
     Route::get('/subscriptions', [SubscriptionController::class, 'getSubscriptions']);
     Route::get('/subscribers', [SubscriptionController::class, 'getSubscribers']);
-    Route::post('/toggle-subscription', [SubscriptionController::class, 'toggleSubscribe']);
+    Route::post('/users/{userId}/toggle-subscription', [SubscriptionController::class, 'toggleSubscribe']);
 
     // Маршруты для постов
     Route::post('/posts', [PostController::class, 'createPost']);
@@ -58,7 +60,7 @@ Route::middleware(['auth:sanctum'])->group(function() {
 
     // Маршруты лайков
     Route::post('/posts/{postId}/like', [LikeController::class, 'toggleLike']);
-    Route::get('/user/{userId}/likes-posts', [LikeController::class, 'getLikesPosts']);
+    Route::get('/user/likes-posts', [LikeController::class, 'getLikesPosts']);
 });
 
 // Маршруты для администраторов

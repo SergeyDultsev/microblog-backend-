@@ -15,7 +15,7 @@ return new class extends Migration
             $table->text('media_content')->nullable();
             $table->unsignedInteger('count_like')->default(0);
             $table->unsignedInteger('count_comment')->default(0);
-            $table->timestamp('created_at')->nullable();
+            $table->timestamps();
         });
     }
 

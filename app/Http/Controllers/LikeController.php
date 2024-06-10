@@ -4,17 +4,22 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\PostResource;
 use App\Models\Like;
+use App\Models\Post;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Ramsey\Uuid\Uuid;
 
 class LikeController
 {
-    public function toggleLike(Request $request)
+    public function toggleLike($postId)
     {
         $userId = Auth::id();
-        $postId = $request->input('post_id');
+
+        if (!$postId) {
+            return response()->json(['error' => 'Post ID is required'], 400);
+        }
 
         DB::transaction(function () use ($userId, $postId) {
             $like = Like::where('user_id', $userId)
@@ -23,24 +28,25 @@ class LikeController
 
             if (!$like) {
                 Like::create([
+                    'like_id' => Uuid::uuid4()->toString(),
+                    'post_id' => $postId,
                     'user_id' => $userId,
-                    'post_id' => $postId
                 ]);
 
-                User::find($postId)->increment('count_like');
+                Post::find($postId)->increment('count_like');
 
-                return response()->json(['message' => "You liked it"], 201);
+                return response()->json(['message' => "You liked it"]);
             } else{
                 $like->delete();
 
-                User::find($postId)->decrement('count_like');
+                Post::find($postId)->decrement('count_like');
 
                 return response()->json(['message' => "You deleted your like"]);
             }
         });
     }
 
-    public function getLikesPosts($userId)
+    public function getLikesPosts()
     {
         $user = Auth::user();
 
@@ -48,13 +54,19 @@ class LikeController
             return response()->json(['message' => 'Unauthorized access'], 401);
         }
 
-        $likesPosts = Like::where('user_id', $userId)->with('post')->get();
+        $likesPosts = Like::where('user_id', $user->id)->get();
 
         if ($likesPosts->isEmpty()) {
             return response()->json(['message' => 'Post not found'], 404);
         }
 
-        $posts = $likesPosts->pluck('post')->filter();
+        $posts = $likesPosts->map(function ($like) {
+            return $like->post;
+        })->filter();
+
+        $postIds = $posts->pluck('post_id')->toArray();
+
+        $posts = Post::whereIn('post_id', array_map('strval', $postIds))->get();
 
         return PostResource::collection($posts);
     }

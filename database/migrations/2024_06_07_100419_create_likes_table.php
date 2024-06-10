@@ -14,7 +14,7 @@ return new class extends Migration
             $table->string('post_id');
             $table->foreign('post_id')->references('post_id')->on('posts')->onDelete('cascade');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->timestamp('created_at')->nullable();
+            $table->timestamps();
         });
     }
 

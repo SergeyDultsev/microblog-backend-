@@ -61,9 +61,8 @@ class AuthController
             'token' => $token,
             'userId' => $user->id,
             'userRole' => $userRole,
+            'userFullName' => $user->full_name,
             'userAvatar' => $user->avatar,
-            'userName' => $user->name,
-            'userSurname' => $user->surname,
         ]);
     }
 

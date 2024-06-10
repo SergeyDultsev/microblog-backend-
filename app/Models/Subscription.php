@@ -16,6 +16,9 @@ class Subscription extends Model
         'created_at'
     ];
 
+    protected $primaryKey = 'subscription_id';
+    public $incrementing = true;
+
     public function subscriber()
     {
         return $this->belongsTo(User::class, 'subscriber_id');

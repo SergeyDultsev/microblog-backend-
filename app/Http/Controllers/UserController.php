@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UserRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -20,33 +22,86 @@ class UserController
         return new UserResource($user);
     }
 
-    public function userAbout(Request $request, User $userId)
+    public function updateFullName(UserRequest $request)
     {
-        $user = User::find($userId);
+        $user = Auth::user();
+        $requestData = $request->only(['name', 'surname']);
 
-        if (!$request->has('about')) {
-            return response()->json(['error' => 'about parameter is required'], 400);
+        if(isset($requestData['name'])) {
+            $editDataUser['name'] = $requestData['name'];
+        }
+        if(isset($requestData['surname'])) {
+            $editDataUser['surname'] = $requestData['surname'];
         }
 
+        $user->update($editDataUser);
         $user->save();
+
+        return response()->json(['message' => 'Full name updated successfully.']);
     }
 
-    public function userAvatar(Request $request, User $userId)
+    public function updateAbout(UserRequest $request)
     {
-        $user = User::find($userId->id);
+        $user = Auth::user();
+        $user->about = $request->about;
+        $user->save();
 
-        if (!$request->has('profile_avatar_url')) {
-            return response()->json(['error' => 'Role parameter is required'], 400);
-        }
+        return response()->json(['message' => 'About section updated successfully.']);
     }
 
-    public function userHeadAvatar(Request $request, User $userId)
+    public function updateAvatar(UserRequest $request)
     {
-        $user = User::find($userId);
+        $user = Auth::user();
 
-        if (!$request->has('profile_head_avatar_url')) {
-            return response()->json(['error' => 'Role parameter is required'], 400);
+        // Обработка изображений
+        if ($request->hasFile('avatar_url')) {
+            $file = $request->file('avatar_url');
+            $path = $file->store('storage/app/public/images');
+            $editDataUser['avatar_url'] = $path;
         }
+
+        $user->update($editDataUser);
+
+        return response()->json(['message' => 'Avatar updated successfully.']);
+    }
+
+    public function updateHeaderAvatar(UserRequest $request)
+    {
+        $user = Auth::user();
+
+        // Обработка изображений
+        if ($request->hasFile('head_avatar_url')) {
+            $file = $request->file('head_avatar_url');
+            $path = $file->store('storage/app/public/images');
+            $editDataUser['head_avatar_url'] = $path;
+        }
+
+        $user->update($editDataUser);
+        return response()->json(['message' => 'Header avatar updated successfully.']);
+    }
+
+    public function updateBirthday(UserRequest $request)
+    {
+        $user = Auth::user();
+        
+        $currentBirthdate = new Carbon($user->birthdate);
+        $day = $request->input('day', $currentBirthdate->day);
+        $month = $request->input('month', $currentBirthdate->month);
+        $year = $request->input('year', $currentBirthdate->year);
+
+        $birthdate = Carbon::createFromDate($year, $month, $day);
+
+        // Проверка что ДР пользователя в прошлом
+        if ($birthdate->isFuture()) {
+            return response()->json(['error' => 'Birthday may only be in the past'], 400);
+        }
+
+        $age = $birthdate->age;
+
+        $user->update([
+            'age' => $age,
+            'birthdate' => $birthdate,
+        ]);
     }
 
     public function deleteUser()

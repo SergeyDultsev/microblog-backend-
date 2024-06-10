@@ -14,8 +14,8 @@ class CommentController
     public function createComment(Request $request, $postId)
     {
         $commentData = $request->all();
-        $commentData['user_id'] = Auth::id();
         $commentData['comment_id'] = Uuid::uuid4()->toString();
+        $commentData['user_id'] = Auth::id();
         $commentData['post_id'] = $postId;
         $commentData['created_at'] = now();
 

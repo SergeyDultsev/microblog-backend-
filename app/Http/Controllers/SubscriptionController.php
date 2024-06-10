@@ -7,13 +7,13 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Ramsey\Uuid\Uuid;
 
 class SubscriptionController
 {
-    public function toggleSubscribe(Request $request)
+    public function toggleSubscribe($targetId)
     {
         $userId = Auth::id();
-        $targetId = $request->input('target_id');
 
         // Проверка, что нельзя подписаться на себя
         if ($userId == $targetId) {
@@ -29,6 +29,7 @@ class SubscriptionController
 
             if (!$subscription) {
                 Subscription::create([
+                    'like_id' => Uuid::uuid4()->toString(),
                     'subscriber_id' => $userId,
                     'target_id' => $targetId,
                 ]);
@@ -57,7 +58,7 @@ class SubscriptionController
     {
         $subscriptions = Subscription::where('subscriber_id', $userId)->pluck('target_id')->toArray();
 
-        return response()->json(['data' => $subscriptions]);
+        return response()->json($subscriptions);
     }
 
     // Получение подписчиков
@@ -65,6 +66,6 @@ class SubscriptionController
     {
         $subscribers = Subscription::where('target_id', $userId)->pluck('subscriber_id')->toArray();
 
-        return response()->json(['data' => $subscribers]);
+        return response()->json($subscribers);
     }
 }

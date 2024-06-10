@@ -42,11 +42,11 @@ class Post extends Model
 
     public function getHasLikedAttribute()
     {
-        $user = Auth::id();
+        $user = Auth::user();
         if (!$user) {
             return false;
         }
-        return $this->likes()->where('user_id', $user)->exists();
+        return $this->likes()->where('user_id', $user->id)->exists();
     }
 
     public function comments()
