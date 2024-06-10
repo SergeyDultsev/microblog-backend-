@@ -17,11 +17,10 @@ class LikeController
     {
         $userId = Auth::id();
 
-        if (!$postId) {
-            return response()->json(['error' => 'Post ID is required'], 400);
-        }
+        $responseMessage = '';
+        $statusCode = 200;
 
-        DB::transaction(function () use ($userId, $postId) {
+        DB::transaction(function () use ($userId, $postId, &$responseMessage, &$statusCode) {
             $like = Like::where('user_id', $userId)
                 ->where('post_id', $postId)
                 ->first();
@@ -35,15 +34,19 @@ class LikeController
 
                 Post::find($postId)->increment('count_like');
 
-                return response()->json(['message' => "You liked it"]);
+                $responseMessage = 'You liked it';
+                $statusCode = 201;
             } else{
                 $like->delete();
 
                 Post::find($postId)->decrement('count_like');
 
-                return response()->json(['message' => "You deleted your like"]);
+                $responseMessage = 'You deleted your like';
+                $statusCode = 200;
             }
         });
+
+        return response()->json(['message' => $responseMessage], $statusCode);
     }
 
     public function getLikesPosts()

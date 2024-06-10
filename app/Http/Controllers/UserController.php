@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ImageResource;
 use App\Http\Requests\UserRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
@@ -49,41 +50,42 @@ class UserController
         return response()->json(['message' => 'About section updated successfully.']);
     }
 
-    public function updateAvatar(UserRequest $request)
+    public function updateAvatar(ImageResource $request)
     {
         $user = Auth::user();
 
         // Обработка изображений
         if ($request->hasFile('avatar_url')) {
             $file = $request->file('avatar_url');
-            $path = $file->store('storage/app/public/images');
-            $editDataUser['avatar_url'] = $path;
+            $path = $file->store('public/avatars');
+            $user->avatar_url = str_replace('public/', 'storage/', $path);
+            $user->save();
+            return response()->json(['message' => 'Avatar updated successfully.']);
+        } else {
+            return response()->json(['error' => 'Image not found.'], 400);
         }
-
-        $user->update($editDataUser);
-
-        return response()->json(['message' => 'Avatar updated successfully.']);
     }
 
-    public function updateHeaderAvatar(UserRequest $request)
+    public function updateHeaderAvatar(ImageResource $request)
     {
         $user = Auth::user();
 
         // Обработка изображений
-        if ($request->hasFile('head_avatar_url')) {
-            $file = $request->file('head_avatar_url');
-            $path = $file->store('storage/app/public/images');
-            $editDataUser['head_avatar_url'] = $path;
+        if ($request->hasFile('head-avatar_url')) {
+            $file = $request->file('avatar_url');
+            $path = $file->store('public/avatars');
+            $user->avatar_url = str_replace('public/', 'storage/', $path);
+            $user->save();
+            return response()->json(['message' => 'Head avatar updated successfully.']);
+        } else {
+            return response()->json(['error' => 'Image not found.'], 400);
         }
-
-        $user->update($editDataUser);
-        return response()->json(['message' => 'Header avatar updated successfully.']);
     }
 
     public function updateBirthday(UserRequest $request)
     {
         $user = Auth::user();
-        
+
         $currentBirthdate = new Carbon($user->birthdate);
         $day = $request->input('day', $currentBirthdate->day);
         $month = $request->input('month', $currentBirthdate->month);

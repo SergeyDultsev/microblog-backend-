@@ -28,6 +28,10 @@ Route::get('/posts/{postId}', [PostController::class, 'getPost']);
 Route::get('/posts/{postId}/comments', [CommentController::class, 'getComments']);
 Route::get('/comments/{commentId}', [CommentController::class, 'getComment']);
 
+// Маршруты для подписок
+Route::get('/users/{userId}/subscriptions', [SubscriptionController::class, 'getSubscriptions']);
+Route::get('/users/{userId}/subscribers', [SubscriptionController::class, 'getSubscribers']);
+
 // Публичный маршрут получение изображения
 Route::get('/images/{fileName}', [ImageController::class, 'getImage']);
 
@@ -38,15 +42,13 @@ Route::middleware(['auth:sanctum'])->group(function() {
 
     // Маршруты для пользователей
     Route::patch('/users/about', [UserController::class, 'updateAbout']);
-    Route::patch('/users/avatar', [UserController::class, 'updateAvatar']);
-    Route::patch('/users/head-avatar', [UserController::class, 'updateHeaderAvatar']);
+    Route::post('/users/avatar', [UserController::class, 'updateAvatar']);
+    Route::post('/users/head-avatar', [UserController::class, 'updateHeaderAvatar']);
     Route::patch('/users/full-name', [UserController::class, 'updateFullName']);
     Route::patch('/users/birthday', [UserController::class, 'updateBirthday']);
     Route::delete('/users-delete', [UserController::class, 'deleteUser']);
 
     // Маршруты для подписок
-    Route::get('/subscriptions', [SubscriptionController::class, 'getSubscriptions']);
-    Route::get('/subscribers', [SubscriptionController::class, 'getSubscribers']);
     Route::post('/users/{userId}/toggle-subscription', [SubscriptionController::class, 'toggleSubscribe']);
 
     // Маршруты для постов
@@ -61,9 +63,12 @@ Route::middleware(['auth:sanctum'])->group(function() {
     // Маршруты лайков
     Route::post('/posts/{postId}/like', [LikeController::class, 'toggleLike']);
     Route::get('/user/likes-posts', [LikeController::class, 'getLikesPosts']);
+
+    // Маршруты админов
+    Route::put('/users/{userId}/role', [RoleController::class, 'updateRole']);
 });
 
 // Маршруты для администраторов
-Route::middleware(['auth:sanctum', 'admin'])->group(function() {
-    Route::put('/users/{userId}/role', [RoleController::class, 'updateRole']);
-});
+// Route::middleware(['auth:sanctum', 'admin'])->group(function() {
+//   Route::put('/users/{userId}/role', [RoleController::class, 'updateRole']);
+// });

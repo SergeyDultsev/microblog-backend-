@@ -13,11 +13,12 @@ class Subscription extends Model
         'subscription_id',
         'subscriber_id',
         'target_id',
-        'created_at'
+        'created_at',
+        'updated_at'
     ];
 
     protected $primaryKey = 'subscription_id';
-    public $incrementing = true;
+    public $incrementing = false;
 
     public function subscriber()
     {

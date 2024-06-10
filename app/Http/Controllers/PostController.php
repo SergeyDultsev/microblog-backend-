@@ -22,7 +22,7 @@ class PostController
         // Обработка изображений
         if ($request->hasFile('media_content')) {
             $file = $request->file('media_content');
-            $path = $file->store('public/images');
+            $path = $file->store('public/posts-media-content');
             $postData['media_content'] = $path;
         }
 
@@ -36,7 +36,7 @@ class PostController
             return response()->json(['error' => 'You are not authorized to update this post'], 403);
         }
 
-        $requestData = $request->only(['text_content', 'media_content']);
+        $requestData = $request->validated();
 
         if(isset($requestData['text_content'])) {
             $editDataPost['text_content'] = $requestData['text_content'];

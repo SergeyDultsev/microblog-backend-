@@ -9,14 +9,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('subscriptions', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('subscription_id');
+            $table->string('subscription_id')->primary();
             $table->unsignedBigInteger('subscriber_id');
             $table->unsignedBigInteger('target_id');
             $table->timestamps();
             $table->foreign('subscriber_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('target_id')->references('id')->on('users')->onDelete('cascade');
-            $table->unique(['subscription_id', 'subscriber_id', 'target_id']);
+            $table->unique(['subscriber_id', 'target_id']);
         });
     }
 

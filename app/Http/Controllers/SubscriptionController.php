@@ -20,16 +20,18 @@ class SubscriptionController
             return response()->json(['error' => 'You cannot subscribe to yourself'], 400);
         }
 
+        $responseMessage = '';
+        $statusCode = 200;
+
         // Используем транзакцию
-        DB::transaction(function () use ($userId, $targetId) {
-            // Поиск подписки
+        DB::transaction(function () use ($userId, $targetId, &$responseMessage, &$statusCode) {
             $subscription = Subscription::where('subscriber_id', $userId)
                 ->where('target_id', $targetId)
                 ->first();
 
             if (!$subscription) {
                 Subscription::create([
-                    'like_id' => Uuid::uuid4()->toString(),
+                    'subscription_id' => Uuid::uuid4()->toString(),
                     'subscriber_id' => $userId,
                     'target_id' => $targetId,
                 ]);
@@ -38,7 +40,8 @@ class SubscriptionController
 
                 User::find($userId)->increment('subscriptions_count');
 
-                return response()->json(['message' => 'You have subscribed'], 201);
+                $responseMessage = 'You have subscribed';
+                $statusCode = 201;
             } else {
                 $subscription->delete();
 
@@ -46,11 +49,12 @@ class SubscriptionController
 
                 User::find($userId)->decrement('subscriptions_count');
 
-                return response()->json(['message' => 'Unsubscribed successfully']);
+                $responseMessage = 'Unsubscribed successfully';
+                $statusCode = 200;
             }
         });
 
-        return response()->json(['error' => 'Failed to toggle subscription'], 500);
+        return response()->json(['message' => $responseMessage], $statusCode);
     }
 
     // Получение подписок
