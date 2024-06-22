@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\UserResource;
 use App\Models\Subscription;
 use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Ramsey\Uuid\Uuid;
@@ -60,16 +60,18 @@ class SubscriptionController
     // Получение подписок
     public function getSubscriptions($userId)
     {
-        $subscriptions = Subscription::where('subscriber_id', $userId)->pluck('target_id')->toArray();
+        $user = User::findOrFail($userId);
+        $subscriptions = $user->subscriptions()->with('target')->get()->pluck('target');
 
-        return response()->json($subscriptions);
+        return UserResource::collection($subscriptions);
     }
 
     // Получение подписчиков
     public function getSubscribers($userId)
     {
-        $subscribers = Subscription::where('target_id', $userId)->pluck('subscriber_id')->toArray();
+        $user = User::findOrFail($userId);
+        $subscribers = $user->subscribers()->with('subscriber')->get()->pluck('subscriber');
 
-        return response()->json($subscribers);
+        return UserResource::collection($subscribers);
     }
 }

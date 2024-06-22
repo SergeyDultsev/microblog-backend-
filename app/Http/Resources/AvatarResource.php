@@ -7,7 +7,6 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class AvatarResource extends JsonResource
 {
-    public static $wrap = null; // Отключаю обёртку data
     public function toArray($request)
     {
         return [

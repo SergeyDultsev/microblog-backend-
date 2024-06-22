@@ -8,7 +8,6 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class UserResource extends JsonResource
 {
-    public static $wrap = null; // Отключаю обёртку data
     public function toArray($request)
     {
         $userRole = $this->hasRole('admin') ? 'admin' : 'user';
@@ -25,7 +24,6 @@ class UserResource extends JsonResource
             'subscriber_count' => $this->subscriber_count,
             'avatar' => new AvatarResource($this->avatar),
             'registration_date' => $this->registration_date,
-            'is_verified' => $this->is_verified,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

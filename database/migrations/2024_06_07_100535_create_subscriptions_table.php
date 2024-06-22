@@ -12,10 +12,10 @@ return new class extends Migration
             $table->string('subscription_id')->primary();
             $table->unsignedBigInteger('subscriber_id');
             $table->unsignedBigInteger('target_id');
-            $table->timestamps();
             $table->foreign('subscriber_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('target_id')->references('id')->on('users')->onDelete('cascade');
             $table->unique(['subscriber_id', 'target_id']);
+            $table->timestamps();
         });
     }
 

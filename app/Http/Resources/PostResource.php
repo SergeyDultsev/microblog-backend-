@@ -6,7 +6,6 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class PostResource extends JsonResource
 {
-    public static $wrap = null; // Отключаю обёртку data
     public function toArray($request)
     {
         $filename = basename($this->media_content);
@@ -20,7 +19,8 @@ class PostResource extends JsonResource
             'hasLiked' => $this->hasLiked,
             'count_like' => $this->count_like,
             'count_comment' => $this->count_comment,
-            'created_at' => $this->created_at->toDateTimeString(),
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
         ];
     }
 }

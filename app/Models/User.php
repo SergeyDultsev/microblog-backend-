@@ -14,11 +14,11 @@ class User extends Authenticatable
 
     protected $fillable = [
         'user_id',
+        'role_id',
         'name',
         'surname',
         'email',
         'password',
-        'role_id',
         'about',
         'age',
         'birthdate',
@@ -37,6 +37,16 @@ class User extends Authenticatable
     public function role()
     {
         return $this->belongsTo(Role::class);
+    }
+
+    public function subscriptions()
+    {
+        return $this->hasMany(Subscription::class, 'subscriber_id');
+    }
+
+    public function subscribers()
+    {
+        return $this->hasMany(Subscription::class, 'target_id');
     }
 
     public function hasRole(string $role)

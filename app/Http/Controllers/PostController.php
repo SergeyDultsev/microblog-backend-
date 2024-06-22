@@ -32,24 +32,30 @@ class PostController
 
     public function updatePost(PostRequest $request, Post $post)
     {
-        if ($post->user_id !== Auth::id()) {
+        $user = Auth::user();
+
+        // Проверка, что пользователь авторизован для обновления поста
+        if ($post->user_id !== $user->id) {
             return response()->json(['error' => 'You are not authorized to update this post'], 403);
         }
 
+        // Получение валидированных данных
         $requestData = $request->validated();
 
+        // Обновление текстового контента, если он есть
         if(isset($requestData['text_content'])) {
-            $editDataPost['text_content'] = $requestData['text_content'];
+            $post->text_content = $requestData['text_content'];
         }
 
         // Обработка изображений
         if ($request->hasFile('media_content')) {
             $file = $request->file('media_content');
-            $path = $file->store('storage/app/public/images');
-            $editDataPost['media_content'] = $path;
+            $path = $file->store('/public/images');
+            $post->media_content = str_replace('public/', 'storage/', $path);
         }
 
-        $post->update($editDataPost);
+        // Сохранение изменений
+        $post->save();
         return response()->json(['message' => 'Successful edit post']);
     }
 
@@ -84,7 +90,7 @@ class PostController
         $user = User::find($userId);
         $posts = $user->posts;
 
-        return response()->json($posts);
+        return PostResource::Collection($posts);
     }
 
     public function feed()

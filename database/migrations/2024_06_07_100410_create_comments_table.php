@@ -17,6 +17,7 @@ class extends Migration
             $table->text('comment_content');
             $table->unsignedInteger('count_like')->default(0);
             $table->timestamp('created_at')->nullable();
+            $table->timestamps();
         });
     }
 

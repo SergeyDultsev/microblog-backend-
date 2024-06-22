@@ -16,6 +16,7 @@ class Comment extends Model
         'comment_content',
         'count_like',
         'created_at',
+        'updated_at',
     ];
 
     protected $casts = [

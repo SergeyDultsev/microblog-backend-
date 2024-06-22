@@ -57,7 +57,7 @@ class UserController
         // Обработка изображений
         if ($request->hasFile('avatar_url')) {
             $file = $request->file('avatar_url');
-            $path = $file->store('public/avatars');
+            $path = $file->store('/public/images');
             $user->avatar_url = str_replace('public/', 'storage/', $path);
             $user->save();
             return response()->json(['message' => 'Avatar updated successfully.']);
@@ -73,7 +73,7 @@ class UserController
         // Обработка изображений
         if ($request->hasFile('head-avatar_url')) {
             $file = $request->file('avatar_url');
-            $path = $file->store('public/avatars');
+            $path = $file->store('/public/images');
             $user->avatar_url = str_replace('public/', 'storage/', $path);
             $user->save();
             return response()->json(['message' => 'Head avatar updated successfully.']);
@@ -131,6 +131,6 @@ class UserController
             return response()->json(['message' => 'Users not found'], 404);
         }
 
-        return response()->json($users);
+        return UserResource::collection($users);
     }
 }

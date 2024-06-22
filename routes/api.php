@@ -53,7 +53,6 @@ Route::middleware(['auth:sanctum'])->group(function() {
 
     // Маршруты для постов
     Route::post('/posts', [PostController::class, 'createPost']);
-    Route::put('/posts/{postId}', [PostController::class, 'updatePost']);
     Route::delete('/posts/{postId}', [PostController::class, 'deletePost']);
 
     // Маршруты для комментариев
